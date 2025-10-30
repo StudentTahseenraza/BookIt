@@ -19,8 +19,7 @@ const ExperienceDetails: React.FC = () => {
   useEffect(() => {
   const fetchExperience = async () => {
     try {
-      // TODO: Replace with actual API endpoint
-     const response = await fetch(`https://bookit-91pz.onrender.com/api/experiences/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/experiences/${id}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch experience');
@@ -48,7 +47,6 @@ const ExperienceDetails: React.FC = () => {
 
   fetchExperience();
 }, [id]);
-
   const availableSlots = experience?.slots.filter(slot => slot.date === selectedDate) || [];
 
   const handleBookNow = () => {

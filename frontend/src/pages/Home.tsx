@@ -11,38 +11,35 @@ const Home: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchExperiences = async () => {
-      try {
-        const response = await fetch('https://bookit-91pz.onrender.com/api/experiences');
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Ensure data is an array
-        if (Array.isArray(data)) {
-          setExperiences(data);
-        } else {
-          // If backend returns { data: array } structure
-          setExperiences(data.data || []);
-        }
-      } catch (err) {
-        console.error('Error fetching experiences:', err);
-        setError('Failed to load experiences. Please try again later.');
-        
-        // Fallback to mock data if API is not available
-        const { mockExperiences } = await import('../data/mockData');
-        setExperiences(mockExperiences);
-      } finally {
-        setLoading(false);
+  const fetchExperiences = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/experiences`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
+      
+      const data = await response.json();
+      
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setExperiences(data);
+      } else {
+        // If backend returns { data: array } structure
+        setExperiences(data.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching experiences:', err);
+      // Fallback to mock data
+      const { mockExperiences } = await import('../data/mockData');
+      setExperiences(mockExperiences);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchExperiences();
-  }, []);
-
+  fetchExperiences();
+}, []);
   if (loading) return <LoadingSpinner />;
   if (error) {
     return (

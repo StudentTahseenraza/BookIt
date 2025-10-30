@@ -43,60 +43,87 @@ const Checkout: React.FC = () => {
   const totalPrice = basePrice - discount;
 
   const validatePromoCode = async (code: string) => {
-    if (!code) {
-      setPromoValidation(null);
-      setAppliedPromo('');
-      return;
-    }
+  if (!code) {
+    setPromoValidation(null);
+    setAppliedPromo('');
+    return;
+  }
 
-    setIsValidatingPromo(true);
-    try {
-      // TODO: Replace with actual API endpoint
-      const response = await fetch('https://bookit-91pz.onrender.com/api/promo/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ promoCode: code, amount: basePrice }),
-      });
-      const validation: PromoValidation = await response.json();
-      setPromoValidation(validation);
-      if (validation.isValid) {
-        setAppliedPromo(code);
-      }
-    } catch (error) {
-      setPromoValidation({ isValid: false, discountAmount: 0, discountType: 'fixed', finalPrice: basePrice });
-    } finally {
-      setIsValidatingPromo(false);
+  setIsValidatingPromo(true);
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/promo/validate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ promoCode: code, amount: basePrice }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+    
+    const validation: PromoValidation = await response.json();
+    setPromoValidation(validation);
+    if (validation.isValid) {
+      setAppliedPromo(code);
+    }
+  } catch (error) {
+    console.error('Promo validation error:', error);
+    setPromoValidation({ 
+      isValid: false, 
+      discountAmount: 0, 
+      discountType: 'fixed' as const, 
+      finalPrice: basePrice 
+    });
+  } finally {
+    setIsValidatingPromo(false);
+  }
+};
 
   const onSubmit = async (data: CheckoutForm) => {
-    try {
-      const bookingData = {
-        experienceId: experience._id,
-        slotDate: selectedDate,
-        userName: data.userName,
-        userEmail: data.userEmail,
-        participants: data.participants,
-        promoCode: appliedPromo || undefined,
-        totalPrice,
-      };
+  try {
+    const bookingData = {
+      experienceId: experience._id,
+      slotDate: selectedDate,
+      userName: data.userName,
+      userEmail: data.userEmail,
+      participants: data.participants,
+      promoCode: appliedPromo || undefined,
+      totalPrice,
+    };
 
-      // TODO: Replace with actual API endpoint
-      const response = await fetch('http://localhost:5000/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bookingData),
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bookingData),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      navigate('/booking-result', { 
+        state: { 
+          success: true, 
+          bookingData: result.data 
+        }
       });
-
-      if (response.ok) {
-        navigate('/booking-result', { state: { success: true, bookingData } });
-      } else {
-        navigate('/booking-result', { state: { success: false } });
-      }
-    } catch (error) {
-      navigate('/booking-result', { state: { success: false } });
+    } else {
+      const errorData = await response.json();
+      navigate('/booking-result', { 
+        state: { 
+          success: false,
+          error: errorData.message 
+        }
+      });
     }
-  };
+  } catch (error) {
+    console.error('Booking error:', error);
+    navigate('/booking-result', { 
+      state: { 
+        success: false,
+        error: 'Network error occurred. Please try again.'
+      }
+    });
+  }
+};
 
   return (
     <motion.div

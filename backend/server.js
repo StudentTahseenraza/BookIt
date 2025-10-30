@@ -29,13 +29,28 @@ app.use(helmet());
 app.use(generalLimiter);
 
 // CORS
-app.use(cors({
-  origin: [
-    'https://book-it-gr52.vercel.app', // your live frontend
-    // 'http://localhost:5173',           // for local dev
-  ],
-  credentials: true
-}));
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://your-frontend-domain.vercel.app', // Replace with your actual frontend URL
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 
 // Body parser middleware
