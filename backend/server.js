@@ -30,9 +30,13 @@ app.use(generalLimiter);
 
 // CORS
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'https://book-it-gr52.vercel.app', // your live frontend
+    // 'http://localhost:5173',           // for local dev
+  ],
   credentials: true
 }));
+
 
 // Body parser middleware
 app.use(express.json({ limit: '10mb' }));
