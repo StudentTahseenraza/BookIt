@@ -20,7 +20,7 @@ const ExperienceDetails: React.FC = () => {
   const fetchExperience = async () => {
     try {
       // TODO: Replace with actual API endpoint
-      const response = await fetch(`http://localhost:5000/api/experiences/${id}`);
+     const response = await fetch(`https://bookit-91pz.onrender.com/api/experiences/${id}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch experience');

@@ -52,7 +52,7 @@ const Checkout: React.FC = () => {
     setIsValidatingPromo(true);
     try {
       // TODO: Replace with actual API endpoint
-      const response = await fetch('http://localhost:5000/api/promo/validate', {
+      const response = await fetch('https://bookit-91pz.onrender.com/api/promo/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ promoCode: code, amount: basePrice }),
