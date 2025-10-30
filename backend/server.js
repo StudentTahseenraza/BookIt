@@ -35,8 +35,8 @@ const corsOptions = {
     if (!origin) return callback(null, true);
     
     const allowedOrigins = [
-      'http://localhost:3000',
-      'https://your-frontend-domain.vercel.app', // Replace with your actual frontend URL
+      // 'http://localhost:3000',
+      'https://book-it-lemon.vercel.app', // Replace with your actual frontend URL
       process.env.FRONTEND_URL
     ].filter(Boolean);
     
