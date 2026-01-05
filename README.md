@@ -51,12 +51,6 @@ This project was developed as part of the **Fullstack Intern Assignment**.
 
 ---
 
-## 📸 Figma Design
-
-The frontend layout follows the provided Figma design:  
-👉 [HD Booking Figma Design](https://www.figma.com/design/8X6E1Ev8YdtZ3erV0lifvb/HD-booking?node-id=0-1&p=f&t=K4scwnxfIHmfbb2a-0)
-
----
 
 ## 🧩 Application Flow
 
